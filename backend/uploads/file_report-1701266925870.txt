@@ -1,0 +1,102 @@
+def from_leetspeak(word):
+    translated_word = word.replace('4','a').replace('7','t').replace('5','s').replace('3','e')
+    return translated_word
+
+if __name__ == '__main__':
+    word = 'l337'
+    normal_word = from_leetspeak(word)
+    print(normal_word)
+    
+
+def lev(word_1, word_2, index=0, count=0):
+    
+    if index >= min(len(word_1), len(word_2)):
+        count += abs(len(word_1) - len(word_2))  
+        #print(count)
+        return count
+    if word_1[index] == word_2[index]:
+        return lev(word_1, word_2, index + 1, count)
+    else:
+        count += 1
+        return lev(word_1, word_2, index + 1, count)
+
+lev("hellxs", "hgsgxs")
+
+def is_accepted(word):
+    start = 0
+    i = 0
+    end = len(word)
+    while(True):
+        if(i == end):
+            break
+        if word[i] == 'R':
+            start = i-1
+            break
+        i +=1
+        
+    
+    w = word if start<0 else word[start:len(word)]
+        
+    state = 0
+    for char in w:
+        def transition(state, char):
+            if state == 0:
+                    return 1
+            elif state == 1:
+                if char == "R":
+                    return 2
+            elif state == 2:
+                if char == "A" or char == "E":
+                    return 3
+            elif state == 3:
+                if char == "W":
+                    return 4
+            elif state == 4:
+                if char == "I":
+                    return 6
+                elif char == "E":
+                    return 5
+            elif state == 6:
+                if char == "E":
+                    return 5
+            elif state == 5:
+                if char == "C":
+                    return 7 
+            return -1 
+        
+        state = transition(state, char)
+        if state == -1:
+            return False
+    
+
+    return state == 7
+
+word1 = "KRAWIEC"
+word2 = "PRAEIWEC"
+word3 = "KRAWEC"
+print("Czy słowo 1 jest akceptowane:", is_accepted(word1))
+print("Czy słowo 2 jest akceptowane:", is_accepted(word2))
+print("Czy słowo 3 jest akceptowane:", is_accepted(word3))
+
+word_list = ['L474WI3C', 'CH3RL4WI3C', 'CHUD3RL4WI3C', 'DMUCH4WI3C', 'DZIUR4WI3C',
+'KR4WI3C', 'PLUG4WI3C', '5ZM47Ł4WI3C', '5ZUBR4WI3C', 'NI3MR4WI3C', 'CI3K4WI3J',
+'KRW4WI3J', 'J45KR4WI3J', 'KUL4WI3J', 'BUR4W3J', 'CHY7R4W3J', 'MOKR4W3J',
+'NI3PR4W3J', 'PONUR4W3J', '5Z4R4W3J']
+
+
+selected_words = [] 
+
+for word in word_list:
+    normal_word = from_leetspeak(word).upper()
+    if(is_accepted(normal_word)):
+        selected_words.append(normal_word)
+max_dif = 0
+for word1 in selected_words:
+    for word2 in selected_words:
+        dif = lev(word1,word2)
+        max_dif = dif if dif > max_dif else max_dif
+        
+for index, word1 in enumerate(selected_words):
+    for word2 in selected_words[index+1:]:
+        if(max_dif == lev(word1,word2)):
+            print(f"{word1} {word2} {max_dif}")
